@@ -99,6 +99,10 @@ pub trait StateApi<Hash> {
 	#[rpc(name = "state_getRuntimeVersion", alias("chain_getRuntimeVersion"))]
 	fn runtime_version(&self, hash: Option<Hash>) -> FutureResult<RuntimeVersion>;
 
+	/// Reads storage value at a given block + key, returning read proof.
+	#[rpc(name = "state_getReadProof")]
+	fn read_proof(&self, id: Option<Hash>, key: StorageKey) -> FutureResult<Vec<Vec<u8>>>;
+
 	/// Query historical storage entries (by key) starting from a block given as the second parameter.
 	///
 	/// NOTE This first returned result contains the initial state of storage for all keys.

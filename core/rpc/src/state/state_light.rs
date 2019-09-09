@@ -241,6 +241,14 @@ impl<Block, F, B, E, RA> StateBackend<B, E, Block, RA> for LightState<Block, F, 
 		Box::new(version)
 	}
 
+	fn read_proof(
+		&self,
+		block: Option<Block::Hash>,
+		key: StorageKey,
+	) -> FutureResult<Vec<Vec<u8>>> {
+		Box::new(result(Err(client_err(ClientError::NotAvailableOnLightClient))))
+	}
+
 	fn query_storage(
 		&self,
 		_from: Block::Hash,

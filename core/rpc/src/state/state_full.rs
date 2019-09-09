@@ -336,6 +336,17 @@ impl<B, E, Block, RA> StateBackend<B, E, Block, RA> for FullState<B, E, Block, R
 				.map_err(client_err)))
 	}
 
+	fn read_proof(
+		&self,
+		block: Option<Block::Hash>,
+		key: StorageKey,
+	) -> FutureResult<Vec<Vec<u8>>> {
+		Box::new(result(
+			self.block_or_best(block)
+				.and_then(|block| self.client.read_proof(&BlockId::Hash(block), &key.0))
+				.map_err(client_err)))
+	}
+
 	fn query_storage(
 		&self,
 		from: Block::Hash,

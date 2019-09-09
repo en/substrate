@@ -145,6 +145,9 @@ pub trait StateBackend<B, E, Block: BlockT, RA>: Send + Sync + 'static
 	/// Get the runtime version.
 	fn runtime_version(&self, block: Option<Block::Hash>) -> FutureResult<RuntimeVersion>;
 
+	/// Reads storage value at a given block + key, returning read proof.
+	fn read_proof(&self, block: Option<Block::Hash>, key: StorageKey) -> FutureResult<Vec<Vec<u8>>>;
+
 	/// Query historical storage entries (by key) starting from a block given as the second parameter.
 	///
 	/// NOTE This first returned result contains the initial state of storage for all keys.
@@ -424,6 +427,10 @@ impl<B, E, Block, RA> StateApi<Block::Hash> for State<B, E, Block, RA>
 
 	fn runtime_version(&self, at: Option<Block::Hash>) -> FutureResult<RuntimeVersion> {
 		self.backend.runtime_version(at)
+	}
+
+	fn read_proof(&self, block: Option<Block::Hash>, key: StorageKey) -> FutureResult<Vec<Vec<u8>>> {
+		self.backend.read_proof(block, key)
 	}
 
 	fn subscribe_runtime_version(&self, meta: Self::Metadata, subscriber: Subscriber<RuntimeVersion>) {
