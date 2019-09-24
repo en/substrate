@@ -343,7 +343,7 @@ impl<B, E, Block, RA> StateBackend<B, E, Block, RA> for FullState<B, E, Block, R
 	) -> FutureResult<Vec<Vec<u8>>> {
 		Box::new(result(
 			self.block_or_best(block)
-				.and_then(|block| self.client.read_proof(&BlockId::Hash(block), &key.0))
+				.and_then(|block| self.client.read_proof(&BlockId::Hash(block), &[key.0]))
 				.map_err(client_err)))
 	}
 
