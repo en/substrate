@@ -153,6 +153,7 @@ export_api! {
 	pub(crate) trait OtherApi {
 		/// The current relay chain identifier.
 		fn chain_id() -> u64;
+		fn run_wasm();
 
 		/// Print a number.
 		fn print_num(val: u64);

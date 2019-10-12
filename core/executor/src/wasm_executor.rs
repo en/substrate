@@ -456,6 +456,11 @@ impl_wasm_host_interface! {
 			context.sandbox().memory_teardown(memory_idx)
 		}
 
+		ext_run_wasm() {
+			runtime_io::run_wasm();
+			Ok(())
+		}
+
 		ext_print_utf8(utf8_data: Pointer<u8>, utf8_len: WordSize) {
 			if let Ok(utf8) = context.read_memory(utf8_data, utf8_len) {
 				runtime_io::print_utf8(&utf8);

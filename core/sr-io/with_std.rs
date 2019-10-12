@@ -182,6 +182,10 @@ impl OtherApi for () {
 		).unwrap_or(0)
 	}
 
+	fn run_wasm() {
+		println!("in run wasm");
+	}
+
 	fn print_num(val: u64) {
 		println!("{}", val);
 	}

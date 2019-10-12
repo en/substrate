@@ -154,6 +154,7 @@ pub mod ext {
 	/// (most importantly, storage) or perform heavy hash calculations.
 	/// See also "ext_" functions in sr-sandbox and sr-std
 	extern_functions! {
+		fn ext_run_wasm();
 		/// Host functions for printing, useful for debugging.
 		fn ext_print_utf8(utf8_data: *const u8, utf8_len: u32);
 		/// Print data as hex.
@@ -760,6 +761,12 @@ impl OtherApi for () {
 	fn chain_id() -> u64 {
 		unsafe {
 			ext_chain_id.get()()
+		}
+	}
+
+	fn run_wasm() {
+		unsafe {
+			ext_run_wasm.get()();
 		}
 	}
 
