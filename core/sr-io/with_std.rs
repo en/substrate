@@ -30,6 +30,179 @@ use std::{collections::HashMap, convert::TryFrom};
 
 environmental!(ext: trait Externalities<Blake2Hasher>);
 
+use std::cell::RefCell;
+
+use wasmi::{
+    memory_units, Error, Externals, FuncInstance, FuncRef, MemoryDescriptor, MemoryInstance,
+    MemoryRef, ModuleImportResolver, RuntimeArgs, RuntimeValue, Signature, Trap, ValueType,
+};
+
+use wasmi::{
+     ImportsBuilder, Module, ModuleInstance, ModuleRef, LINEAR_MEMORY_PAGE_SIZE,
+};
+
+fn create_default_host_externals() -> HostExternals {
+    HostExternals::new(
+        (MAX_RUNTIME_MEM / LINEAR_MEMORY_PAGE_SIZE.0) as u32,
+        RefCell::new(None),
+    )
+}
+
+/// create wasm instance
+pub fn create_wasm_instance<B: AsRef<[u8]>>(wasm_bin: B) -> Result<ModuleRef, Error> {
+    let module = Module::from_buffer(wasm_bin)?;
+    let module_resolver = create_default_host_externals();
+    let imports = ImportsBuilder::new().with_resolver("env", &module_resolver);
+    let instance = ModuleInstance::new(&module, &imports)?.assert_no_start();
+    Ok(instance)
+}
+
+
+/// pass wasm instance and invoke export function by name and args
+pub fn invoke_export(
+    instance: &ModuleRef,
+    func_name: &str,
+    args: &[RuntimeValue],
+) -> Result<Option<RuntimeValue>, Error> {
+    let mut host  = create_default_host_externals();
+    instance.invoke_export(func_name, args, &mut host)
+}
+
+mod env {
+    use super::*;
+
+    pub const ADD_FUNC_INDEX: usize = 0;
+    pub const CHECK_READ_PROOF: usize = 1;
+
+    pub fn check_read_proof() -> Result<Option<RuntimeValue>, Trap> {
+        Ok(Some(RuntimeValue::I32(0)))
+    }
+
+    pub fn add(args: RuntimeArgs) -> Result<Option<RuntimeValue>, Trap> {
+        let a: u32 = args.nth_checked(0)?;
+        let b: u32 = args.nth_checked(1)?;
+        let result = a + b;
+        Ok(Some(RuntimeValue::I32(result as i32)))
+    }
+}
+
+// maximum memory in bytes
+pub const MAX_RUNTIME_MEM: usize = 1024 * 1024 * 1024; // 1 GiB
+pub const MAX_CODE_MEM: usize = 16 * 1024 * 1024; // 16 MiB
+
+/// HostExternals for index host functions and resolve importer
+#[derive(Debug, Default)]
+pub struct HostExternals {
+    max_memory: u32, // in pages.
+    memory: RefCell<Option<MemoryRef>>,
+}
+
+impl HostExternals {
+    /// Create a host external interface
+    pub fn new(max_memory: u32, memory: RefCell<Option<MemoryRef>>) -> Self {
+        Self { max_memory, memory }
+    }
+
+    fn check_signature(&self, index: usize, signature: &Signature) -> bool {
+        let (params, ret_ty): (&[ValueType], Option<ValueType>) = match index {
+            env::ADD_FUNC_INDEX => (&[ValueType::I32, ValueType::I32], Some(ValueType::I32)),
+            env::CHECK_READ_PROOF => (&[], Some(ValueType::I32)),
+
+            _ => return false,
+        };
+        signature.params() == params && signature.return_type() == ret_ty
+    }
+}
+
+// for index functions
+impl Externals for HostExternals {
+    fn invoke_index(
+        &mut self,
+        index: usize,
+        args: RuntimeArgs,
+    ) -> Result<Option<RuntimeValue>, Trap> {
+        match index {
+            env::ADD_FUNC_INDEX => env::add(args),
+
+            env::CHECK_READ_PROOF => env::check_read_proof(),
+
+            _ => panic!("Unimplemented function at {}", index),
+        }
+    }
+}
+
+// resolve name to host functions
+impl ModuleImportResolver for HostExternals {
+    fn resolve_func(&self, field_name: &str, signature: &Signature) -> Result<FuncRef, Error> {
+        match field_name {
+            "ext_add" => {
+                let (params, ret_ty) =
+                    (&[ValueType::I32, ValueType::I32][..], Some(ValueType::I32));
+                if signature.params() != params || signature.return_type() != ret_ty {
+                    Err(Error::Instantiation(format!(
+                        "Export {} has a bad signature",
+                        field_name
+                    )))
+                } else {
+                    Ok(FuncInstance::alloc_host(
+                        Signature::new(params, ret_ty),
+                        env::ADD_FUNC_INDEX,
+                    ))
+                }
+            }
+            "ext_check_read_proof" => {
+                let (params, ret_ty) = (&[][..], Some(ValueType::I32));
+                if signature.params() != params || signature.return_type() != ret_ty {
+                    Err(Error::Instantiation(format!(
+                        "Export {} has a bad signature",
+                        field_name
+                    )))
+                } else {
+                    Ok(FuncInstance::alloc_host(
+                        Signature::new(params, ret_ty),
+                        env::ADD_FUNC_INDEX,
+                    ))
+                }
+            }
+
+            _ => {
+                return Err(Error::Instantiation(format!(
+                    "Export {} not found",
+                    field_name
+                )));
+            }
+        }
+    }
+
+    fn resolve_memory(
+        &self,
+        field_name: &str,
+        descriptor: &MemoryDescriptor,
+    ) -> Result<MemoryRef, Error> {
+        if field_name == "memory" {
+            let effective_max = descriptor.maximum().unwrap_or(self.max_memory);
+            if descriptor.initial() > self.max_memory || effective_max > self.max_memory {
+                Err(Error::Instantiation(
+                    "Module requested too much memory".to_owned(),
+                ))
+            } else {
+                let mem = MemoryInstance::alloc(
+                    memory_units::Pages(descriptor.initial() as usize),
+                    descriptor
+                        .maximum()
+                        .map(|x| memory_units::Pages(x as usize)),
+                )?;
+                *self.memory.borrow_mut() = Some(mem.clone());
+                Ok(mem)
+            }
+        } else {
+            Err(Error::Instantiation(
+                "Memory imported under unknown name".to_owned(),
+            ))
+        }
+    }
+}
+
 /// Additional bounds for `Hasher` trait for with_std.
 pub trait HasherBounds {}
 impl<T: Hasher> HasherBounds for T {}
@@ -183,7 +356,13 @@ impl OtherApi for () {
 	}
 
 	fn run_wasm() {
-		println!("in run wasm");
+		use std::fs;
+
+		let wasm = fs::read("../target/debug/wbuild/proof/proof.compact.wasm").expect("file not found");
+		let instance = create_wasm_instance(wasm).expect("create wasm error!!!!!!");
+		let args = [];
+		let res = invoke_export(&instance, "check_read_proof", &args).expect("has no err").expect("has return value");
+		println!("result: {:?}", res);
 	}
 
 	fn print_num(val: u64) {
