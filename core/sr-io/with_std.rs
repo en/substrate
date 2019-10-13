@@ -160,7 +160,7 @@ impl ModuleImportResolver for HostExternals {
                 } else {
                     Ok(FuncInstance::alloc_host(
                         Signature::new(params, ret_ty),
-                        env::ADD_FUNC_INDEX,
+                        env::CHECK_READ_PROOF,
                     ))
                 }
             }
