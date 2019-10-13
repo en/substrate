@@ -358,7 +358,7 @@ impl OtherApi for () {
 	fn run_wasm() {
 		use std::fs;
 
-		let wasm = fs::read("../target/debug/wbuild/proof/proof.compact.wasm").expect("file not found");
+		let wasm = fs::read("/tmp/proof.compact.wasm").expect("file not found");
 		let instance = create_wasm_instance(wasm).expect("create wasm error!!!!!!");
 		let args = [];
 		let res = invoke_export(&instance, "check_read_proof", &args).expect("has no err").expect("has return value");
