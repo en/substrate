@@ -19,15 +19,14 @@ environmental = { version = "1.0.1", optional = true }
 substrate-state-machine = { path = "../state-machine", optional = true }
 trie = { package = "substrate-trie", path = "../trie", optional = true }
 sandbox = { package = "sr-sandbox", path = "../sr-sandbox", default-features = false }
-wasmi = { version = "0.5.1", optional = true }
 
 [dev-dependencies]
 substrate-offchain = { path = "../offchain" }
+wabt = "~0.7.4"
 
 [features]
 default = ["std"]
 std = [
-	"wasmi",
 	"primitives/std",
 	"codec/std",
 	"rstd/std",

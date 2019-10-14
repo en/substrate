@@ -51,6 +51,22 @@ fn execute_wasm(code: &[u8], args: &[TypedValue]) -> Result<ReturnValue, HostErr
 	result.map_err(|_| HostError)
 }
 
+#[test]
+fn invoke_proof() {
+	let code = wabt::wat2wasm(r#"
+		(module
+			(import "env" "ext_check_read_proof" (func $ext_check_read_proof (result i32)))
+			(export "ext_check_read_proof" (func $ext_check_read_proof))
+		)
+		"#).unwrap();
+
+	let result = execute_wasm(
+		&code,
+		&[],
+	);
+	assert_eq!(result.unwrap(), ReturnValue::Value(TypedValue::I32(1)));
+}
+
 
 /// Additional bounds for `Hasher` trait for with_std.
 pub trait HasherBounds {}
