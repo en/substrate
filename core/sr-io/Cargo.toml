@@ -28,6 +28,7 @@ substrate-offchain = { path = "../offchain" }
 default = ["std"]
 std = [
 	"wasmi",
+	"sandbox/std",
 	"primitives/std",
 	"codec/std",
 	"rstd/std",
