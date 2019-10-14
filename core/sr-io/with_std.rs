@@ -47,7 +47,7 @@ fn execute_wasm(code: &[u8], args: &[TypedValue]) -> Result<ReturnValue, HostErr
 	let mut state = State {counter: 0};
 	env_builder.add_host_func("env", "ext_check_read_proof", check_read_proof);
 	let mut instance = Instance::new(code, &env_builder, &mut state)?;
-	let result = instance.invoke(b"ext_check_read_proof", args, &mut state);
+	let result = instance.invoke(b"check_read_proof", args, &mut state);
 	result.map_err(|_| HostError)
 }
 
@@ -55,10 +55,22 @@ fn execute_wasm(code: &[u8], args: &[TypedValue]) -> Result<ReturnValue, HostErr
 fn invoke_proof() {
 	let code = wabt::wat2wasm(r#"
 		(module
-			(import "env" "ext_check_read_proof" (func $ext_check_read_proof (result i32)))
-			(export "ext_check_read_proof" (func $ext_check_read_proof))
-		)
+		  (type $t0 (func (result i32)))
+		  (import "env" "ext_check_read_proof" (func $ext_check_read_proof (type $t0)))
+		  (func $check_read_proof (type $t0) (result i32)
+			(local $l0 i32)
+			call $ext_check_read_proof
+			set_local $l0
+			get_local $l0
+			return)
+		  (export "check_read_proof" (func $check_read_proof)))
 		"#).unwrap();
+
+	let result = execute_wasm(
+		&code,
+		&[],
+	);
+	assert_eq!(result.unwrap(), ReturnValue::Value(TypedValue::I32(1)));
 
 	let result = execute_wasm(
 		&code,
