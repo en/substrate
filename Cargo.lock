@@ -3825,6 +3825,7 @@ dependencies = [
  "libsecp256k1 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "parity-scale-codec 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sr-sandbox 2.0.0",
  "sr-std 2.0.0",
  "substrate-offchain 2.0.0",
  "substrate-primitives 2.0.0",
