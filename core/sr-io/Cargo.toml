@@ -27,7 +27,6 @@ wabt = "~0.7.4"
 [features]
 default = ["std"]
 std = [
-	"wasmi",
 	"sandbox/std",
 	"primitives/std",
 	"codec/std",
