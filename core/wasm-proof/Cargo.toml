@@ -1,0 +1,42 @@
+[package]
+name = "wasm-proof"
+version = "2.0.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+build = "build.rs"
+edition = "2018"
+
+[build-dependencies]
+rustc_version = "0.2.3"
+
+[dependencies]
+rstd = { package = "sr-std", path = "../sr-std", default-features = false }
+primitives = { package = "substrate-primitives", path = "../primitives", default-features = false }
+codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false }
+hash-db = { version = "0.15.2", default-features = false }
+substrate-state-machine = { path = "../state-machine", optional = true }
+sandbox = { package = "sr-sandbox", path = "../sr-sandbox", default-features = false }
+sr_primitives = { package = "sr-primitives", path = "../sr-primitives", default-features = false }
+#wasm-interface = { package = "substrate-wasm-interface", path = "../wasm-interface"}
+
+[dev-dependencies]
+wabt = "~0.7.4"
+
+[features]
+default = ["std"]
+std = [
+	"sandbox/std",
+	"primitives/std",
+	"codec/std",
+	"rstd/std",
+	"hash-db/std",
+	"substrate-state-machine",
+]
+nightly = []
+strict = []
+
+# These two features are used for `no_std` builds for the environments which already provides
+# `#[panic_handler]` and `#[alloc_error_handler]`.
+#
+# For the regular wasm runtime builds those are not used.
+no_panic_handler = []
+no_oom = []

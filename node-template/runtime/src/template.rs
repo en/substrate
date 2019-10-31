@@ -10,6 +10,7 @@
 
 use support::{decl_module, decl_storage, decl_event, dispatch::Result};
 use system::ensure_signed;
+use wasm_proof::run_wasm;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
