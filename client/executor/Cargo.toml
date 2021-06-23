@@ -14,7 +14,7 @@ readme = "README.md"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-derive_more = "0.99.2"
+derive_more = "0.99.14"
 codec = { package = "parity-scale-codec", version = "2.0.0" }
 sp-io = { version = "3.0.0", path = "../../primitives/io" }
 sp-core = { version = "3.0.0", path = "../../primitives/core" }

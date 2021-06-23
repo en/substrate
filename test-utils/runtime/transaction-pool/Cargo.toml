@@ -20,4 +20,4 @@ sp-runtime = { version = "3.0.0", path = "../../../primitives/runtime" }
 sp-transaction-pool = { version = "3.0.0", path = "../../../primitives/transaction-pool" }
 sc-transaction-graph = { version = "3.0.0", path = "../../../client/transaction-pool/graph" }
 futures = { version = "0.3.1", features = ["compat"] }
-derive_more = "0.99.2"
+derive_more = "0.99.14"
