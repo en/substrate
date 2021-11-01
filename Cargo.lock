@@ -5883,7 +5883,7 @@ dependencies = [
  "frame-system",
  "pallet-balances",
  "parity-scale-codec",
- "rand_chacha 0.2.2",
+ "rand_chacha 0.3.0",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5907,7 +5907,7 @@ dependencies = [
  "pallet-staking-reward-curve",
  "pallet-timestamp",
  "parity-scale-codec",
- "rand_chacha 0.2.2",
+ "rand_chacha 0.3.0",
  "scale-info",
  "serde",
  "sp-application-crypto",
@@ -7673,7 +7673,7 @@ dependencies = [
  "parity-scale-codec",
  "parking_lot 0.11.1",
  "rand 0.7.3",
- "rand_chacha 0.2.2",
+ "rand_chacha 0.3.0",
  "retain_mut",
  "sc-block-builder",
  "sc-client-api",
@@ -9365,7 +9365,7 @@ dependencies = [
  "parity-scale-codec",
  "parking_lot 0.11.1",
  "rand 0.7.3",
- "rand_chacha 0.2.2",
+ "rand_chacha 0.3.0",
  "schnorrkel",
  "serde",
  "sp-core",
@@ -10810,7 +10810,7 @@ version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f559b464de2e2bdabcac6a210d12e9b5a5973c251e102c44c585c71d51bd78e"
 dependencies = [
- "cfg-if 1.0.0",
+ "cfg-if 0.1.10",
  "rand 0.8.4",
  "static_assertions",
 ]
