@@ -425,7 +425,7 @@ version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec107f431ee3d8a8e45e6dd117adab769556ef463959e77bf6a4888d5fd500cf"
 dependencies = [
- "heck",
+ "heck 0.3.2",
  "proc-macro-error 0.4.12",
  "proc-macro2",
  "quote",
@@ -507,7 +507,7 @@ dependencies = [
  "sp-core",
  "sp-keystore",
  "sp-runtime",
- "strum 0.21.0",
+ "strum",
  "substrate-prometheus-endpoint",
  "thiserror",
  "wasm-timer",
@@ -1686,7 +1686,7 @@ version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c5f0096a91d210159eceb2ff5e1c4da18388a170e1e3ce948aac9c8fdbbf595"
 dependencies = [
- "heck",
+ "heck 0.3.2",
  "proc-macro2",
  "quote",
  "syn",
@@ -2572,6 +2572,12 @@ checksum = "87cbf45460356b7deeb5e3415b5563308c0a9b057c85e12b06ad551f98d0a6ac"
 dependencies = [
  "unicode-segmentation",
 ]
+
+[[package]]
+name = "heck"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2540771e65fc8cb83cd6e8a237f70c319bd5c29f78ed1084ba5d50eeac86f7f9"
 
 [[package]]
 name = "hermit-abi"
@@ -5389,7 +5395,7 @@ dependencies = [
  "sp-std",
  "sp-tracing",
  "static_assertions",
- "strum 0.21.0",
+ "strum",
  "strum_macros 0.21.1",
 ]
 
@@ -6747,7 +6753,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "355f634b43cdd80724ee7848f95770e7e70eefa6dcf14fea676216573b8fd603"
 dependencies = [
  "bytes 1.0.1",
- "heck",
+ "heck 0.3.2",
  "itertools",
  "log 0.4.14",
  "multimap",
@@ -9351,7 +9357,7 @@ dependencies = [
  "lazy_static",
  "sp-core",
  "sp-runtime",
- "strum 0.20.0",
+ "strum",
 ]
 
 [[package]]
@@ -9836,7 +9842,7 @@ version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5ba9cdfda491b814720b6b06e0cac513d922fc407582032e8706e9f137976f90"
 dependencies = [
- "heck",
+ "heck 0.3.2",
  "proc-macro-error 1.0.4",
  "proc-macro2",
  "quote",
@@ -9845,32 +9851,11 @@ dependencies = [
 
 [[package]]
 name = "strum"
-version = "0.20.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7318c509b5ba57f18533982607f24070a55d353e90d4cae30c467cdb2ad5ac5c"
+checksum = "063e6045c0e62079840579a7e47a355ae92f60eb74daaf156fb1e84ba164e63f"
 dependencies = [
- "strum_macros 0.20.1",
-]
-
-[[package]]
-name = "strum"
-version = "0.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aaf86bbcfd1fa9670b7a129f64fc0c9fcbbfe4f1bc4210e9e98fe71ffc12cde2"
-dependencies = [
- "strum_macros 0.21.1",
-]
-
-[[package]]
-name = "strum_macros"
-version = "0.20.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee8bc6b87a5112aeeab1f4a9f7ab634fe6cbefc4850006df31267f4cfb9e3149"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "syn",
+ "strum_macros 0.24.1",
 ]
 
 [[package]]
@@ -9879,9 +9864,22 @@ version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d06aaeeee809dbc59eb4556183dd927df67db1540de5be8d3ec0b6636358a5ec"
 dependencies = [
- "heck",
+ "heck 0.3.2",
  "proc-macro2",
  "quote",
+ "syn",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.24.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9550962e7cf70d9980392878dfaf1dcc3ece024f4cf3bf3c46b978d0bad61d6c"
+dependencies = [
+ "heck 0.4.0",
+ "proc-macro2",
+ "quote",
+ "rustversion",
  "syn",
 ]
 
